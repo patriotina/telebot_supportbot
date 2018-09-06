@@ -70,27 +70,89 @@ def application_button(message):
 
 @bot.message_handler(commands=["Маршрут"])
 def application_route(message):
-    pass
+    global troublemessage
+    troublemessage += 'В приложении не корректно расчитывается маршрут \n'
+    bot.send_message(message.chat.id, troublemessage + 'Допишите комментарий или отправьте заявку')
 
 
 @bot.message_handler(commands=["Другое"])
 def application_other(message):
-    pass
+    global troublemessage
+    troublemessage += 'Приложение работает не корректно \n'
+    bot.send_message(message.chat.id, troublemessage + 'Допишите комментарий и отправьте заявку')
 
 
 @bot.message_handler(commands=["Оплата"])
 def driver_payment(message):
-    pass
+    global troublemessage
+    troublemessage += 'Проблемы с оплатой у водителя \n'
+    keyboard = types.ReplyKeyboardMarkup(True)
+    keyboard.row('/Готово')
+    bot.send_message(message.chat.id, 'Допишите комментарий и отправьте заявку', reply_markup=keyboard)
 
+
+    @bot.message_handler(content_types=["text"])
+    def done_driver(message):
+        global troublemessage
+        troublemessage += message.text
+
+        keyboard = types.ReplyKeyboardMarkup(True, True, True)
+        keyboard.row('/start', '/alarm', '/spec')
+        bot.send_message(message.chat.id, troublemessage, reply_markup=keyboard)
 
 @bot.message_handler(commands=["Комплекс"])
 def standart_soft(message):
-    pass
+    global troublemessage
+    troublemessage += 'Проблема с комплекосм\n'
+    keyboard = types.ReplyKeyboardMarkup(True)
+    keyboard.row('/Телефония', '/Приложение')
+    bot.send_message(message.chat.id, 'Какя часть комплекса не работает?', reply_markup=keyboard)
+
+
+@bot.message_handler(commands=["Телефония"])
+def soft_phone(message):
+    global troublemessage
+    troublemessage += 'Проблема с телефонией\n'
+    keyboard = types.ReplyKeyboardMarkup(True)
+    keyboard.row('/Входящая', '/Исходящая', '/Блокировка')
+    bot.send_message(message.chat.id, 'Какое направление телефонии требует внимания?', reply_markup=keyboard)
+
+
+@bot.message_handler(commands=["Входящая"])
+def phone_in(message):
+    global troublemessage
+    troublemessage += 'Проблема с входящими звонками\n'
+    keyboard = types.ReplyKeyboardMarkup(True)
+    keyboard.row('/Готово')
+    bot.send_message(message.chat.id, 'Допишите комментарий с какого момента не работает и отправьте заявку', reply_markup=keyboard)
+
+
+@bot.message_handler(commands=["Исходящая"])
+def phone_out(message):
+    global troublemessage
+    troublemessage += 'Проблема с отзвонами\n'
+    keyboard = types.ReplyKeyboardMarkup(True)
+    keyboard.row('/Готово')
+    bot.send_message(message.chat.id, 'Допишите комментарий с какого момента не работает и отправьте заявку', reply_markup=keyboard)
+
+
+@bot.message_handler(commands=["Блокировка"])
+def phone_block(message):
+    global troublemessage
+    troublemessage += 'Заблокировать абонента\n'
+    keyboard = types.ReplyKeyboardMarkup(True)
+    keyboard.row('/Готово')
+    bot.send_message(message.chat.id, 'Допишите кого и по какой причине заблокировать и отправьте заявку', reply_markup=keyboard)
 
 
 @bot.message_handler(commands=["Оператор"])
-def standart_oper(message):
-    pass
+def oper_pc(message):
+    global troublemessage
+    troublemessage += 'Проблема с местом оператора\n'
+    keyboard = types.ReplyKeyboardMarkup(True)
+    keyboard.row('/Не работает ПК', '/Проблема с таксиофисом')
+    keyboard.row('/Не работает гарнитура', '/Не верное время')
+    bot.send_message(message.chat.id, 'Что не работает?', reply_markup=keyboard)
 
 
 @bot.message_handler(commands=['spec'])
@@ -105,6 +167,16 @@ def cmd_alarm(message):
     answer = 'Описание аварии!!!'
     log(message, answer)
     bot.send_message(message.chat.id, 'Описание аварии!!!')
+
+
+@bot.message_handler(commands=['Готово'])
+def done_ask(message):
+    global troublemessage
+    troublemessage += str(message.text)
+
+    keyboard = types.ReplyKeyboardMarkup(True, True, True)
+    keyboard.row('/start', '/alarm', '/spec')
+    bot.send_message(message.chat.id, troublemessage, reply_markup=keyboard)
 
 
 @bot.message_handler(content_types=["text"])
