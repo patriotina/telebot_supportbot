@@ -35,7 +35,12 @@ def cmd_start(message):
 
     tb_msg.is_start = True
     tb_msg.t_message += str(datetime.datetime.now()) + '\n'
-    tb_msg.t_message += str(message.from_user.first_name) + str(message.from_user.last_name) + '\n'
+    #tb_msg.t_message += str(message.from_user.first_name) + ' ' + str(message.from_user.last_name) + ' AKA ' + str(message.from_user.username) + '\n'
+    tb_msg.t_message += 'Message from {0} {1}; AKA {2} ID: {3}; From chat: {4}; \n'.format(message.from_user.first_name,
+                                                            message.from_user.last_name,
+                                                            message.from_user.username,
+                                                            str(message.from_user.id),
+                                                            message.chat.title)
     print(str(message))
 
     keyboard = types.ReplyKeyboardMarkup(True, True, True)
@@ -96,8 +101,6 @@ def application_other(message):
 @bot.message_handler(commands=["Оплата"])
 def driver_payment(message):
     tb_msg.t_message += 'Проблемы с оплатой у водителя \n'
-#    keyboard = types.ReplyKeyboardMarkup(True)
-#    keyboard.row('/Готово')
     msg = 'Дополните информацию: позывные, все водители или единичный случай, еще какие-то особенности и подробности'
     hide_keyb = types.ReplyKeyboardRemove()
     bot.send_message(message.chat.id, msg, reply_markup=hide_keyb)
@@ -105,11 +108,7 @@ def driver_payment(message):
 
 @bot.message_handler(commands=["Комплекс"])
 def standart_soft(message):
-    global troublemessage
-    troublemessage += 'Проблема с комплекосм\n'
-
     tb_msg.t_message += 'Проблема с комплекосм\n'
-
     keyboard = types.ReplyKeyboardMarkup(True)
     keyboard.row('/Телефония', '/Приложение')
     bot.send_message(message.chat.id, 'Какя часть комплекса не работает?', reply_markup=keyboard)
@@ -117,9 +116,7 @@ def standart_soft(message):
 
 @bot.message_handler(commands=["Телефония"])
 def soft_phone(message):
-
     tb_msg.t_message += 'Проблема с телефонией\n'
-
     keyboard = types.ReplyKeyboardMarkup(True)
     keyboard.row('/Входящая', '/Исходящая', '/Блокировка')
     bot.send_message(message.chat.id, 'Какое направление телефонии требует внимания?', reply_markup=keyboard)
@@ -127,51 +124,72 @@ def soft_phone(message):
 
 @bot.message_handler(commands=["Входящая"])
 def phone_in(message):
-    global troublemessage
-    troublemessage += 'Проблема с входящими звонками\n'
-
     tb_msg.t_message += 'Проблема с входящими звонками\n'
-
-    keyboard = types.ReplyKeyboardMarkup(True)
-    keyboard.row('/Готово')
-    bot.send_message(message.chat.id, 'Допишите комментарий с какого момента не работает и отправьте заявку', reply_markup=keyboard)
+    msg = 'Допишите комментарий с какого момента не работает и отправьте заявку кнопкой /Готово'
+    hide_keyb = types.ReplyKeyboardRemove()
+    bot.send_message(message.chat.id, msg, reply_markup=hide_keyb)
 
 
 @bot.message_handler(commands=["Исходящая"])
 def phone_out(message):
-    global troublemessage
-    troublemessage += 'Проблема с отзвонами\n'
-
     tb_msg.t_message += 'Проблема с отзвонами\n'
-
-    keyboard = types.ReplyKeyboardMarkup(True)
-    keyboard.row('/Готово')
-    bot.send_message(message.chat.id, 'Допишите комментарий с какого момента не работает и отправьте заявку', reply_markup=keyboard)
+    msg = 'Допишите комментарий с какого момента не работает, по всем каналам или нет и отправьте заявку кнопкой /Готово'
+    hide_keyb = types.ReplyKeyboardRemove()
+    bot.send_message(message.chat.id, msg, reply_markup=hide_keyb)
 
 
 @bot.message_handler(commands=["Блокировка"])
 def phone_block(message):
-    global troublemessage
-    troublemessage += 'Заблокировать абонента\n'
-
     tb_msg.t_message += 'Заблокировать абонента\n'
-
-    keyboard = types.ReplyKeyboardMarkup(True)
-    keyboard.row('/Готово')
-    bot.send_message(message.chat.id, 'Допишите кого и по какой причине заблокировать и отправьте заявку', reply_markup=keyboard)
+    msg = 'Допишите кого и по какой причине заблокировать и отправьте заявку кнопкой /Готово'
+    hide_keyb = types.ReplyKeyboardRemove()
+    bot.send_message(message.chat.id, msg, reply_markup=hide_keyb)
 
 
 @bot.message_handler(commands=["Оператор"])
-def oper_pc(message):
-    global troublemessage
-    troublemessage += 'Проблема с местом оператора\n'
-
+def oper(message):
     tb_msg.t_message += 'Проблема с местом оператора\n'
 
     keyboard = types.ReplyKeyboardMarkup(True)
     keyboard.row('/Не работает ПК', '/Проблема с таксиофисом')
     keyboard.row('/Не работает гарнитура', '/Не верное время')
     bot.send_message(message.chat.id, 'Что не работает?', reply_markup=keyboard)
+
+
+@bot.message_handler(commands=['/Не работает ПК'])
+def oper_pc(message):
+    print('operator PC')
+    tb_msg.t_message += 'Не работает ПК \n'
+    msg = 'Сообщите номер ПК и отправьте заявку кнопкой /Готово'
+    hide_keyb = types.ReplyKeyboardRemove()
+    bot.send_message(message.chat.id, msg, reply_markup=hide_keyb)
+
+
+@bot.message_handler(commands=['/Проблема с таксиофисом'])
+def oper_taxioffice(message):
+    print('taxioffice troubles')
+    tb_msg.t_message += 'Проблема с таксиофисом \n'
+    msg = 'Сообщите номер ПК где не работает комплекс и отправьте заявку кнопкой /Готово'
+    hide_keyb = types.ReplyKeyboardRemove()
+    bot.send_message(message.chat.id, msg, reply_markup=hide_keyb)
+
+
+@bot.message_handler(commands=['/Не работает гарнитура'])
+def oper_garniture(message):
+    print('garniture troubles')
+    tb_msg.t_message += 'Не работает гарнитура \n'
+    msg = 'Сообщите номер ПК где не работает гарнитура и отправьте заявку кнопкой /Готово'
+    hide_keyb = types.ReplyKeyboardRemove()
+    bot.send_message(message.chat.id, msg, reply_markup=hide_keyb)
+
+
+@bot.message_handler(commands=['/Не верное время'])
+def oper_pctime(message):
+    print('pc time troubles')
+    tb_msg.t_message += 'Не верное время на ПК \n'
+    msg = 'Сообщите номер ПК с некорректным временем и отправьте заявку кнопкой /Готово'
+    hide_keyb = types.ReplyKeyboardRemove()
+    bot.send_message(message.chat.id, msg, reply_markup=hide_keyb)
 
 
 @bot.message_handler(commands=['spec'])
@@ -222,7 +240,7 @@ def repeat_all_message(message):
 
 #    url_button = types.InlineKeyboardButton(text="go to yandex", url="ya.ru")
 #    keyboard.add(url_button)
-        msg = "Hello, #username"
+        msg = "Hello, " + str(message.from_user.username)
     bot.send_message(message.chat.id, msg, reply_markup=keyboard)
     print(message.text)
 
