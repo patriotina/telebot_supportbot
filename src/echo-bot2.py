@@ -35,7 +35,6 @@ def cmd_start(message):
 
     tb_msg.is_start = True
     tb_msg.t_message += str(datetime.datetime.now()) + '\n'
-    #tb_msg.t_message += str(message.from_user.first_name) + ' ' + str(message.from_user.last_name) + ' AKA ' + str(message.from_user.username) + '\n'
     tb_msg.t_message += 'Message from {0} {1}; AKA {2} ID: {3}; From chat: {4}; \n'.format(message.from_user.first_name,
                                                             message.from_user.last_name,
                                                             message.from_user.username,
@@ -43,9 +42,23 @@ def cmd_start(message):
                                                             message.chat.title)
     print(str(message))
 
+    keyboard = types.InlineKeyboardMarkup()
+    url_button = types.InlineKeyboardButton(text="Перейти к списку заявок", url="http://help.373soft.ru/issues")
+    keyboard.add(url_button)
+    bot.send_message(message.chat.id, "Привет! Нажми на кнопку и перейди в поисковик.", reply_markup=keyboard)
+
     keyboard = types.ReplyKeyboardMarkup(True, True, True)
-    keyboard.row('/Водитель', '/Комплекс', '/Оператор')
-    bot.send_message(message.chat.id, 'У кого проблема?', reply_markup=keyboard)
+    keyboard.row('/Водитель')
+    keyboard.row('/Комплекс')
+    keyboard.row('/Оператор')
+    ans = bot.send_message(message.chat.id, 'У кого проблема?', reply_markup=keyboard)
+
+    #bot.register_next_step_handler(ans, standart_driver)
+
+@bot.message_handler(commands=["chatid"])
+def cmd_chatid(message):
+    hide_keyb = types.ReplyKeyboardRemove()
+    bot.send_message(message.chat.id, message.chat.id, reply_markup=hide_keyb)
 
 
 @bot.message_handler(commands=["Водитель"])
@@ -53,7 +66,9 @@ def standart_driver(message):
     tb_msg.t_message += 'Проблема на стороне водителя\n'
 
     keyboard = types.ReplyKeyboardMarkup(True)
-    keyboard.row('/Подключение', '/Приложение', '/Оплата')
+    keyboard.row('/Подключение')
+    keyboard.row('/Приложение')
+    keyboard.row('/Оплата')
     bot.send_message(message.chat.id, 'С чем у водителей проблема?', reply_markup=keyboard)
 
 
@@ -71,7 +86,9 @@ def driver_application(message):
     tb_msg.t_message += 'Проблемы в приложении водителя \n'
 
     keyboard = types.ReplyKeyboardMarkup(True)
-    keyboard.row('/Кнопка', '/Маршрут', '/Другое')
+    keyboard.row('/Кнопка')
+    keyboard.row('/Маршрут')
+    keyboard.row('/Другое')
     bot.send_message(message.chat.id, 'Что не работает в приложении?', reply_markup=keyboard)
 
 
@@ -110,7 +127,8 @@ def driver_payment(message):
 def standart_soft(message):
     tb_msg.t_message += 'Проблема с комплекосм\n'
     keyboard = types.ReplyKeyboardMarkup(True)
-    keyboard.row('/Телефония', '/Приложение')
+    keyboard.row('/Телефония')
+    keyboard.row('/Приложение')
     bot.send_message(message.chat.id, 'Какя часть комплекса не работает?', reply_markup=keyboard)
 
 
@@ -118,7 +136,9 @@ def standart_soft(message):
 def soft_phone(message):
     tb_msg.t_message += 'Проблема с телефонией\n'
     keyboard = types.ReplyKeyboardMarkup(True)
-    keyboard.row('/Входящая', '/Исходящая', '/Блокировка')
+    keyboard.row('/Входящая')
+    keyboard.row('/Исходящая')
+    keyboard.row('/Блокировка')
     bot.send_message(message.chat.id, 'Какое направление телефонии требует внимания?', reply_markup=keyboard)
 
 
@@ -151,8 +171,10 @@ def oper(message):
     tb_msg.t_message += 'Проблема с местом оператора\n'
 
     keyboard = types.ReplyKeyboardMarkup(True)
-    keyboard.row('/Не работает ПК', '/Проблема с таксиофисом')
-    keyboard.row('/Не работает гарнитура', '/Не верное время')
+    keyboard.row('/Не работает ПК')
+    keyboard.row('/Проблема с таксиофисом')
+    keyboard.row('/Не работает гарнитура')
+    keyboard.row('/Не верное время')
     bot.send_message(message.chat.id, 'Что не работает?', reply_markup=keyboard)
 
 
